@@ -55,12 +55,12 @@ class Board
     # and print the resulting board 
     def advance
         old = snapshot
-        @board_size.each{ |r| 
-            r.each{ |c| 
-                @game_board[r][c] = check_liveliness r,c
+        @board_size.times{ |r| 
+            @board_size.times{ |c| 
+                @game_board[r][c] = check_liveliness(old, r, c) ?  1 : 0
             }
         }
-        self.print_board
+        @game_board
     end 
 
     #:private
@@ -78,7 +78,7 @@ class Board
 
     # Check to see if the cell at given position will become live or die 
     # will check its 8 neighbors (less for boundary cells)
-    def check_liveliness(i,j)
+    def check_liveliness(board, i,j)
         left_bound = [0, i - 1].max
         right_bound = [@board_size - 1, i + 1].min
         upper_bound = [0, j - 1].max
@@ -87,12 +87,12 @@ class Board
         neighbors = [] 
         (left_bound..right_bound).each{ |row|
             (upper_bound..lower_bound).each{ |col| 
-                neighbors << @game_board[row][col] unless row == i && col == j
+                neighbors << board[row][col] unless row == i && col == j
             }
         }
 
         live_neighbors = neighbors.count{ |x| x == 1 }
-        if @game_board[i][j] == 0 
+        if board[i][j] == 0 
             live_neighbors == 3 
         else 
             live_neighbors == 2 || live_neighbors == 3 
