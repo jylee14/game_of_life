@@ -26,4 +26,24 @@ class Board_Tests < Test::Unit::TestCase
             assert_equal board.game_board, old
         }
     end 
+
+    def test_liveliness 
+        board = Board.new([
+            [1, 0, 0],
+            [0, 0, 1],
+            [1, 0, 0]
+        ])
+
+        puts "checking liveliness"
+        truth = [
+            [false, false, false], 
+            [false, true, false], 
+            [false, false, false]
+        ]
+        (0..2).each{ |i| 
+            (0..2).each{ |j| 
+                assert_equal truth[i][j], board.check_liveliness(i,j)
+            }
+        }
+    end 
 end 

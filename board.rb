@@ -4,9 +4,15 @@ class Board
     attr_reader :game_board
 
     def initialize n
+        if n.is_a? Array 
+            @game_board = n 
+            @board_size = n.size
+            return
+        end 
+
         unless n.is_a?(Numeric) && n > 2 
             @game_board = nil
-            return nil
+            return
         end 
 
         coin = Random.new 
@@ -49,6 +55,11 @@ class Board
     # and print the resulting board 
     def advance
         old = snapshot
+        @board_size.each{ |r| 
+            r.each{ |c| 
+                @game_board[r][c] = check_liveliness r,c
+            }
+        }
         self.print_board
     end 
 
@@ -68,10 +79,10 @@ class Board
     # Check to see if the cell at given position will become live or die 
     # will check its 8 neighbors (less for boundary cells)
     def check_liveliness(i,j)
-        left_bound = i-1 unless i == 0
-        right_bound = i+1 unless i == @board_size - 1
-        upper_bound = j-1 unless j == 0
-        lower_bound = j+1 unless j == @board_size - 1
+        left_bound = [0, i - 1].max
+        right_bound = [@board_size - 1, i + 1].min
+        upper_bound = [0, j - 1].max
+        lower_bound = [@board_size - 1, j + 1].min
 
         neighbors = [] 
         (left_bound..right_bound).each{ |row|
@@ -79,6 +90,7 @@ class Board
                 neighbors << @game_board[row][col] unless row == i && col == j
             }
         }
+
         live_neighbors = neighbors.count{ |x| x == 1 }
         if @game_board[i][j] == 0 
             live_neighbors == 3 
