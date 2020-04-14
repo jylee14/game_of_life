@@ -9,15 +9,6 @@ class Board_Tests < Test::Unit::TestCase
         assert_nil Board.new(2).game_board
     end 
 
-    def test_board_init_with_0_or_1
-        board1 = Board.new(3).game_board #a 3x3 board 
-        board1.each{ |row| 
-            row.each{ |val|
-                assert (val == 0 || val == 1)
-            }
-        }
-    end 
-
     def test_snapshot
         (3..10).each{ |n| 
             board = Board.new(n)

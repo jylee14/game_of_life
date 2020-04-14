@@ -22,7 +22,7 @@ class Board
         }
         n.times{ |i| 
             n.times{ |j| 
-                @game_board[i][j] = coin.rand(0..1)
+                @game_board[i][j] = coin.rand(0..1) == 1
             }
         }
         @game_board
@@ -32,11 +32,10 @@ class Board
     def print_board 
         system "clear"       
         
-        print_bounds
         @board_size.times{ |i| 
             print "|   "
             @board_size.times{ |j| 
-                print "#{@game_board[i][j]}   "
+                print "#{@game_board[i][j] ? 'O' : ' '}   "
             }
             puts "|"
             unless i == @board_size - 1
@@ -44,9 +43,14 @@ class Board
                 puts
             end
         }
-        print_bounds
     end 
     
+    def step 
+        self.advance 
+        self.print_board
+    end 
+
+    :private
     # main logic for Game of Life 
     # will follow the following rules 
     #   1. Any live cell with two or three live neighbors survives.
@@ -57,13 +61,12 @@ class Board
         old = snapshot
         @board_size.times{ |r| 
             @board_size.times{ |c| 
-                @game_board[r][c] = check_liveliness(old, r, c) ?  1 : 0
+                @game_board[r][c] = check_liveliness(old, r, c)
             }
         }
         @game_board
     end 
 
-    #:private
     # create a deep copy of the current board to act as a reference snapshot to calculate 
     # the next tick
     def snapshot 
@@ -91,18 +94,11 @@ class Board
             }
         }
 
-        live_neighbors = neighbors.count{ |x| x == 1 }
+        live_neighbors = neighbors.count{ |x| x }
         if board[i][j] == 0 
             live_neighbors == 3 
         else 
             live_neighbors == 2 || live_neighbors == 3 
         end 
-    end 
-
-    def print_bounds 
-        (5*@board_size).times{
-            print "-"
-        }
-        puts
     end 
 end 
